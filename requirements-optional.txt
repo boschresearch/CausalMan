@@ -1,0 +1,10 @@
+# Optional dependencies — install individually as needed
+
+# Graph layout engine (required by graph_plotter.py for Graphviz-based layouts)
+pygraphviz>=1.10
+
+# Headless browser for exporting graphs to PNG
+playwright>=1.40
+
+# R bridge for dagitty-based marginalization (requires a local R installation)
+rpy2>=3.5
