@@ -1,6 +1,6 @@
 # CausalMan
 
-A causal inference simulator for manufacturing process systems. CausalMan generates synthetic observational and interventional datasets from complex production lines with known ground-truth causal graphs, enabling benchmarking of causal discovery algorithms.
+A Causal simulator for manufacturing process systems. CausalMan generates synthetic observational and interventional datasets from complex production lines with known ground-truth causal graphs, enabling benchmarking of causal discovery algorithms.
 
 ## Overview
 
@@ -15,9 +15,9 @@ CausalMan implements a Functional Causal Model (FCM) framework over a hierarchic
 
 ```
 causal_simulator_to_release/
-├── causalman/                    # Installable Python package
+├── src/                    # Installable Python package
 │   ├── causalman.py              # Main CausalMan simulator class
-│   ├── fcm.py                    # FCM core: DAG construction, sampling, interventions
+│   ├── fcm.py                    # FCM core: DAG construction, sampling, interventions. 
 │   ├── node.py                   # Node model definitions
 │   ├── sample_batch.py           # Per-batch sampling logic
 │   ├── graph_plotter.py          # Interactive graph visualization (Pyvis)
@@ -31,16 +31,15 @@ causal_simulator_to_release/
 │   │   ├── sampling.py           # Sequential and parallel batch runners
 │   │   ├── graph.py              # Graph manipulation and I/O utilities
 │   │   ├── data.py               # DataFrame processing utilities
-│   │   └── equation.py           # Equation construction helpers
+│   │   └── equation.py           # Sympy equation construction helpers
+│   ├── output/                     # Generated simulation results
 │   ├── example_observational.ipynb
 │   └── interventions_example.ipynb
-├── src/
 │   ├── causal_inference_data_generation.ipynb  # Generate CI benchmark datasets (notebook)
 │   ├── rca_data_generation.ipynb               # Generate RCA benchmark datasets (notebook)
 │   └── generate_causal_inference_data.py       # Generate CI benchmark datasets (CLI)
 ├── pyproject.toml
-├── requirements.txt
-└── output/                       # Generated simulation results
+└── requirements.txt
 ```
 
 ## Installation
@@ -269,33 +268,11 @@ python src/generate_causal_inference_data.py --variant large --samples 5000 --ou
 | `--samples` | `10000` | Rows to write per dataset |
 | `--output` | `output/causalman_causal_inference` | Root output directory |
 
-## FCM API (Low Level)
-
-For custom causal model construction outside of the pre-built production line:
-
-```python
-from sympy import symbols
-from sympy.stats import Normal, Uniform, Gamma
-from causalman.fcm import FCM
-
-x, y, z = symbols("x y z")
-from sympy import Eq
-
-fcm = FCM(name="example", seed=2023)
-fcm.input_fcm([
-    Eq(x, Uniform("noise_x", left=-1, right=1)),
-    Eq(y, 2 * x**2 + Normal("noise_y", 0, 0.5)),
-    Eq(z, 9 * y * x * Gamma("noise_z", 0.5, 0.5)),
-])
-
-df = fcm.sample(n=1000)
-fcm.draw()
-```
-
 ## Citation 
 
 If you use CausalMan in your research, please cite the associated work. 
 
+```bibtex
 @misc{tagliapietra2025causalman,
       title={CausalMan: A physics-based simulator for large-scale causality}, 
       author={Nicholas Tagliapietra and Juergen Luettin and Lavdim Halilaj and Moritz Willig and Tim Pychynski and Kristian Kersting},
@@ -306,6 +283,9 @@ If you use CausalMan in your research, please cite the associated work.
       url={https://arxiv.org/abs/2502.12707},
       doi={10.48550/arXiv.2502.12707}
 }
+```
+
+**arXiv:** [https://arxiv.org/abs/2502.12707](https://arxiv.org/abs/2502.12707)
 
 ## License
 
