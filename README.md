@@ -289,7 +289,7 @@ If you use CausalMan in your research, please cite the associated work.
 
 ## License
 
-PROJECT-NAME is open-sourced under the AGPL-3.0 license. See the
+CausalMan is open-sourced under the AGPL-3.0 license. See the
 [LICENSE](LICENSE) file for details.
 
 For a list of other open source components included in PROJECT-NAME, see the
