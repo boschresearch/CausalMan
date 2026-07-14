@@ -1,10 +1,10 @@
 # CausalMan
 
-A Causal simulator for manufacturing process systems. CausalMan generates synthetic observational and interventional datasets from complex production lines with known ground-truth causal graphs, enabling benchmarking of causal discovery algorithms.
+A Causal simulator for manufacturing process systems. CausalMan generates synthetic observational and interventional datasets from complex production lines with known ground-truth causal graphs, enabling benchmarking of causal discovery, inference and RCA algorithms.
 
 ## Overview
 
-CausalMan implements a Functional Causal Model (FCM) framework over a hierarchical manufacturing production line. Parts flow through machines and parallel sections, and each path through the line has a distinct causal structure parameterized by symbolic structural equations (SymPy). The simulator returns:
+CausalMan implements an expert-defined SCM of a manufacturing production line. Parts flow through machines and parallel sections, and each path through the line has distinct properties and parameterizations. The whole SCM is specified by symbolic structural equations (SymPy). The simulator returns:
 
 - **Observational data** — sensor readings from the partially observable production process
 - **Interventional data** — data under hard do-calculus interventions on selected variables
@@ -127,12 +127,12 @@ obs_df, int_table, path_df, causal_dag = simulator.sample()
 
 | Name | Description |
 |---|---|
-| `causalman_micro` | Minimal single-simulation variant for quick testing |
-| `causalman_small` | Two product simulations on a small production line |
-| `causalman_medium` | Two product simulations on a medium production line |
-| `causalman_large` | Three product simulations on a large production line |
+| `causalman_micro` | Small production line with a single product. 24 Observable variables. |
+| `causalman_small` | Production line with ~50 observable variables. Multiple products. |
+| `causalman_medium` | Medium-size production line with ~180 observable variables. |
+| `causalman_large` | Large-size production line with >400 observable variables. |
 
-Each variant corresponds to a different product running on the same production line structure but with distinct SCM parameterizations (noise levels, failure modes, material properties).
+CausalMan Large simulates the whole production line, and the other variants instead simulate progressively smaller parts of it, with the goal of providing a simpler benchmarking scenario.
 
 ## Configuration Options
 
@@ -150,7 +150,7 @@ CausalMan(
 
 ## Interventional Sampling
 
-Specify a dictionary of hard interventions (do-calculus) before calling `sample()`:
+Specify a dictionary of hard interventions before calling `sample()`:
 
 ```python
 simulator = CausalMan(name="causalman_small", seed=42)
@@ -292,5 +292,5 @@ If you use CausalMan in your research, please cite the associated work.
 CausalMan is open-sourced under the AGPL-3.0 license. See the
 [LICENSE](LICENSE) file for details.
 
-For a list of other open source components included in PROJECT-NAME, see the
+For a list of other open source components included in CausalMan, see the
 file [3rd-party-licenses.txt](3rd-party-licenses.txt).
