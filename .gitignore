@@ -1,0 +1,116 @@
+# =========================
+# Python Fundamentals
+# =========================
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# =========================
+# Virtual Environments
+# =========================
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# =========================
+# Machine Learning & Data
+# =========================
+# Datasets and local data
+data/
+datasets/
+*.csv
+*.tsv
+*.jsonl
+
+# Model checkpoints and weights
+models/
+checkpoints/
+*.pt
+*.pth
+*.h5
+*.pkl
+*.joblib
+
+# Experiment tracking and logs
+runs/
+wandb/
+tb_logs/
+lightning_logs/
+*.log
+
+# =========================
+# Jupyter Notebooks
+# =========================
+.ipynb_checkpoints/
+*/.ipynb_checkpoints/
+
+# =========================
+# Testing & Coverage
+# =========================
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+.pytest_cache/
+pytestdebug.log
+
+# =========================
+# Distribution & Packaging
+# =========================
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# =========================
+# Type Checking
+# =========================
+.mypy_cache/
+.pyre/
+.typeguard_cache/
+
+# =========================
+# IDEs & OS Files
+# =========================
+# VS Code
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# PyCharm / IntelliJ
+.idea/
+
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db
