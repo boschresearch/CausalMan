@@ -26,7 +26,8 @@ venv.bak/
 # Datasets and local data
 data/
 datasets/
-*.csv
+src/output/
+# *.csv
 *.tsv
 *.jsonl
 
