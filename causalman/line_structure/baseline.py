@@ -1208,7 +1208,7 @@ class BaselineStructure(AbstractBaseline):
                     for n in nodes_NaN
                     if n in mapDict.keys() and mapDict[n] in DF.columns
                 ],
-            ] = np.NaN
+            ] = float("nan")
 
         return DF
 

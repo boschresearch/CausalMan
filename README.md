@@ -15,7 +15,7 @@ CausalMan implements an expert-defined SCM of a manufacturing production line. P
 
 ```
 causal_simulator_to_release/
-├── src/                    # Installable Python package
+├── causalman/                    # Installable Python package
 │   ├── causalman.py              # Main CausalMan simulator class
 │   ├── fcm.py                    # FCM core: DAG construction, sampling, interventions. 
 │   ├── node.py                   # Node model definitions
@@ -239,26 +239,26 @@ Two tutorial notebooks are provided in `causalman/`:
 
 ### Benchmark Data Generation
 
-Two notebooks in `src/` generate ready-to-use benchmark CSV datasets:
+Two notebooks in `causalman/` generate ready-to-use benchmark CSV datasets:
 
-- **`src/causal_inference_data_generation.ipynb`** — generates causal inference benchmark datasets. Set `SCALE`, `SEEDS`, and `N_SAMPLES` at the top of the notebook and run all cells. Produces for each (scale, seed) combination:
+- **`causalman/causal_inference_data_generation.ipynb`** — generates causal inference benchmark datasets. Set `SCALE`, `SEEDS`, and `N_SAMPLES` at the top of the notebook and run all cells. Produces for each (scale, seed) combination:
   - `observational.csv` — training data with no interventions
   - `task1_force_ltl_control.csv` / `task1_force_ltl_treatment.csv` — do(PF_M1_T1_Force_LTL = 15000/18000)
   - `task2_force_control.csv` / `task2_force_treatment.csv` — do(PF_M1_T1_Force = 16000/30000)
 
-- **`src/rca_data_generation.ipynb`** — generates root-cause analysis benchmark datasets across 4 tasks and multiple scales. Set `SCALES`, `SEED`, and `N_SAMPLES` at the top and run all cells.
+- **`causalman/rca_data_generation.ipynb`** — generates root-cause analysis benchmark datasets across 4 tasks and multiple scales. Set `SCALES`, `SEED`, and `N_SAMPLES` at the top and run all cells.
 
 A CLI equivalent of the causal inference notebook is also available:
 
 ```bash
 # Basic usage (variant required)
-python src/generate_causal_inference_data.py --variant small
+python causalman/generate_causal_inference_data.py --variant small
 
 # Full benchmark: 5 seeds, 10 000 rows per dataset
-python src/generate_causal_inference_data.py --variant medium --seeds 4 6 42 66 90
+python causalman/generate_causal_inference_data.py --variant medium --seeds 4 6 42 66 90
 
 # Custom output directory and sample count
-python src/generate_causal_inference_data.py --variant large --samples 5000 --output my_output/
+python causalman/generate_causal_inference_data.py --variant large --samples 5000 --output my_output/
 ```
 
 | Argument | Default | Description |

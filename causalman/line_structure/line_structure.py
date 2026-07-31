@@ -16,7 +16,7 @@
 
 from typing import Dict, Optional
 import networkx as nx
-from numpy import NaN
+from math import nan as NaN
 from pandas import DataFrame, concat
 
 from line_structure.parallelsection import ParallelSection
