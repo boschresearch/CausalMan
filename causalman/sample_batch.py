@@ -25,8 +25,17 @@ from utils.data import (generate_interventional_table, merge_strings)
 from utils.graph import (read_all_csv_files_from_simulation,
                          sample_CausalGraph, to_graphml)
 import re
-simplefilter(action="ignore", category=pd.errors.PerformanceWarning)
-simplefilter(action="ignore", category=pd.errors.SettingWithCopyWarning)
+
+
+def _set_pandas_warning_filters(action: str) -> None:
+    """Configure warnings that are available in the installed pandas version."""
+    for warning_name in ("PerformanceWarning", "SettingWithCopyWarning"):
+        warning_category = getattr(pd.errors, warning_name, None)
+        if warning_category is not None:
+            simplefilter(action=action, category=warning_category)
+
+
+_set_pandas_warning_filters("ignore")
 
 
 def sample_batch(
@@ -62,8 +71,7 @@ def sample_batch(
     os.makedirs(simulation_objects_path, exist_ok=True)
 
     if debug_mode:
-        simplefilter(action="once", category=pd.errors.PerformanceWarning)
-        simplefilter(action="once", category=pd.errors.SettingWithCopyWarning)
+        _set_pandas_warning_filters("once")
 
     # Extract batch information from the general batch_info_df
     batch_df = batch_info_df.loc[batch_info_df["subbatch_ID_unique"] == subbatch, :]
