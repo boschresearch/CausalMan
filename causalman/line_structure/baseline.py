@@ -20,8 +20,8 @@ import networkx as nx
 import numpy as np
 from pandas import DataFrame
 from typing import Optional
-from utils.equation import create_distrib_fixed, create_distrib_normal
-from utils.graph import (
+from ..utils.equation import create_distrib_fixed, create_distrib_normal
+from ..utils.graph import (
     dag2fcm,
     get_attr_names,
     get_ltl_of_mp,

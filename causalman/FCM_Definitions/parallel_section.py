@@ -18,11 +18,11 @@ import networkx as nx
 from sympy import Eq, symbols
 from sympy.stats import FiniteRV
 
-from fcm import FCM
-from node import InputNode
-from utils.graph import (add_default_GraphAttributes,
-                         add_default_GraphAttributes_perNode, getSourceNodes,
-                         rename_nodes_and_terms, set_node_distributions)
+from ..fcm import FCM
+from ..node import InputNode
+from ..utils.graph import (add_default_GraphAttributes,
+                           add_default_GraphAttributes_perNode, getSourceNodes,
+                           rename_nodes_and_terms, set_node_distributions)
 
 
 def make_parallelSection(

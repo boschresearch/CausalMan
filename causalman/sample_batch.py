@@ -20,10 +20,11 @@ from typing import Any
 from warnings import simplefilter
 
 import pandas as pd
-from line_structure.line_structure import line_structure
-from utils.data import (generate_interventional_table, merge_strings)
-from utils.graph import (read_all_csv_files_from_simulation,
-                         sample_CausalGraph, to_graphml)
+from .line_structure.line_structure import line_structure
+from .utils.data import (generate_interventional_table, merge_strings)
+from .utils.graph import (read_all_csv_files_from_simulation,
+                          sample_CausalGraph, to_graphml)
+from .utils.serialization import load_pickle
 import re
 
 
@@ -97,7 +98,7 @@ def sample_batch(
 
     filepath = os.path.join(simulation_objects_path, f"production_line_object.pkl")
     with open(filepath, "rb") as f:
-        production_line: line_structure = pickle.load(f)
+        production_line: line_structure = load_pickle(f)
 
     # Load subbatch dataframes
     filename = os.path.join(simulation_objects_path, "df_paths_subbatch.pkl")
@@ -149,13 +150,13 @@ def sample_batch(
             # Load the graph models
             filepath = os.path.join(simulation_objects_path, f"dag_level_2_{path_idx}.pkl")
             with open(filepath, "rb") as f:
-                dag_level_2 = pickle.load(f)
+                dag_level_2 = load_pickle(f)
             filepath = os.path.join(simulation_objects_path, f"dag_level_1_{path_idx}.pkl")
             with open(filepath, "rb") as f:
-                dag_level_1 = pickle.load(f)
+                dag_level_1 = load_pickle(f)
             filepath = os.path.join(simulation_objects_path, f"production_line_{path_idx}.pkl")
             with open(filepath, "rb") as f:
-                production_line: line_structure = pickle.load(f)
+                production_line: line_structure = load_pickle(f)
             
 
             if save_causal_graph:

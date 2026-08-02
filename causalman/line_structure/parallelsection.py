@@ -19,10 +19,10 @@ from typing import Optional
 from networkx import DiGraph
 from pandas import DataFrame, concat
 
-from FCM_Definitions.parallel_section import make_parallelSection
-from line_structure.section import Section
-from utils.graph import getSourceNodes
-from line_structure.baseline import BaselineStructure
+from ..FCM_Definitions.parallel_section import make_parallelSection
+from .section import Section
+from ..utils.graph import getSourceNodes
+from .baseline import BaselineStructure
 
 class ParallelSection(BaselineStructure):
     """

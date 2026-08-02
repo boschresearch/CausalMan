@@ -19,14 +19,14 @@ from __future__ import annotations
 import pickle
 
 from sympy.stats.rv import RandomSymbol
-from fcm import FCM
+from ..fcm import FCM
 import networkx as nx
 import pandas as pd
 import os
 from sympy import Symbol, symbols, Eq
 
 from typing import Dict, List
-from node import NodeModel_sympy
+from ..node import NodeModel_sympy
 
 
 def get_attr_names(dag: nx.DiGraph) -> List[str]:

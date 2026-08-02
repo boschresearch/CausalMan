@@ -19,8 +19,8 @@ import networkx as nx
 from math import nan as NaN
 from pandas import DataFrame, concat
 
-from line_structure.parallelsection import ParallelSection
-from line_structure.baseline import BaselineStructure
+from .parallelsection import ParallelSection
+from .baseline import BaselineStructure
 
 
 class line_structure(BaselineStructure):

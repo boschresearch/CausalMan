@@ -18,7 +18,7 @@ import json
 import os
 from typing import Dict, Optional, Tuple
 
-from utils.equation import (
+from .equation import (
     create_distrib_fixed,
     create_distrib_normal,
     create_distrib_uniform,

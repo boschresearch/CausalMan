@@ -22,7 +22,7 @@ from pandas import DataFrame
 import pandas as pd
 import numpy as np
 from typing import Optional
-from col_masking import mask_columns
+from ..col_masking import mask_columns
 
 
 def merge_strings(df: DataFrame, colNames: list, suffix: str, separator: str):

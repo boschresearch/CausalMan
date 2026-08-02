@@ -9,17 +9,17 @@ For each (variant, seed) combination the script writes:
   - task2_force_treatment.csv    Task 2 treatment arm do(PF_M1_T1_Force = 30000)
 
 Usage examples:
-    python generate_causal_inference_data.py --variant small
-    python generate_causal_inference_data.py --variant medium --seeds 4 6 42 66 90
-    python generate_causal_inference_data.py --variant micro --seeds 42 --samples 5000
-    python generate_causal_inference_data.py --variant large --output my_output/
+    python -m causalman.generate_causal_inference_data --variant small
+    python -m causalman.generate_causal_inference_data --variant medium --seeds 4 6 42 66 90
+    python -m causalman.generate_causal_inference_data --variant micro --seeds 42 --samples 5000
+    python -m causalman.generate_causal_inference_data --variant large --output my_output/
 """
 
 import argparse
 import os
 import sys
 
-from causalman import CausalMan  # type: ignore[import-not-found]
+from causalman import CausalMan
 
 
 # ---------------------------------------------------------------------------

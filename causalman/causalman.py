@@ -18,8 +18,8 @@ import os
 from datetime import datetime
 import pandas as pd
 
-from utils.data import clean_df
-from utils.sampling import run_sampling_parallel, run_sampling_sequential
+from .utils.data import clean_df
+from .utils.sampling import run_sampling_parallel, run_sampling_sequential
 from enum import Enum
 
 

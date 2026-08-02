@@ -252,13 +252,13 @@ A CLI equivalent of the causal inference notebook is also available:
 
 ```bash
 # Basic usage (variant required)
-python causalman/generate_causal_inference_data.py --variant small
+python -m causalman.generate_causal_inference_data --variant small
 
 # Full benchmark: 5 seeds, 10 000 rows per dataset
-python causalman/generate_causal_inference_data.py --variant medium --seeds 4 6 42 66 90
+python -m causalman.generate_causal_inference_data --variant medium --seeds 4 6 42 66 90
 
 # Custom output directory and sample count
-python causalman/generate_causal_inference_data.py --variant large --samples 5000 --output my_output/
+python -m causalman.generate_causal_inference_data --variant large --samples 5000 --output my_output/
 ```
 
 | Argument | Default | Description |

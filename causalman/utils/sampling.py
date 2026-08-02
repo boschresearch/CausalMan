@@ -19,7 +19,7 @@ from concurrent.futures import ProcessPoolExecutor
 import tqdm
 from pandas import DataFrame
 
-from sample_batch import sample_batch  
+from ..sample_batch import sample_batch
 
 
 def run_sampling_sequential(
