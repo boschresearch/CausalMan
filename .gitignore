@@ -37,7 +37,6 @@ checkpoints/
 *.pt
 *.pth
 *.h5
-*.pkl
 *.joblib
 
 # Experiment tracking and logs
