@@ -67,7 +67,8 @@ def sample_batch(
         return re.sub(r'_\d+$', '', input_string)
     choice = remove_numeric_suffix(simulation)
     simulation_objects_path = os.path.join(os.path.dirname(__file__), "dataset_objects", choice, "batch_data", f"batch_{subbatch}")
-    os.makedirs(debug_path, exist_ok=True)
+    if debug_mode:
+        os.makedirs(debug_path, exist_ok=True)
     os.makedirs(batch_path, exist_ok=True)
     os.makedirs(simulation_objects_path, exist_ok=True)
 
