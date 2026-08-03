@@ -69,7 +69,7 @@ def sample_batch(
     simulation_objects_path = os.path.join(os.path.dirname(__file__), "dataset_objects", choice, "batch_data", f"batch_{subbatch}")
     if debug_mode:
         os.makedirs(debug_path, exist_ok=True)
-    os.makedirs(batch_path, exist_ok=True)
+        os.makedirs(batch_path, exist_ok=True)
     os.makedirs(simulation_objects_path, exist_ok=True)
 
     if debug_mode:
@@ -160,7 +160,7 @@ def sample_batch(
                 production_line: line_structure = load_pickle(f)
             
 
-            if save_causal_graph:
+            if save_causal_graph and debug_mode:
                 observed_nodes_list = production_line.merge_observed_nodes()
                 save_graph_data(
                     fileName_prefix, batch_path, dag_level_2, observed_nodes_list
