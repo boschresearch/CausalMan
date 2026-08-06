@@ -16,6 +16,9 @@
 
 import os
 from datetime import datetime
+from enum import Enum
+from numbers import Integral
+
 import pandas as pd
 
 from .graph_projections import (
@@ -25,7 +28,6 @@ from .graph_projections import (
 )
 from .utils.data import clean_df
 from .utils.sampling import run_sampling_parallel, run_sampling_sequential
-from enum import Enum
 
 
 class CausalManChoice(Enum):
@@ -36,6 +38,8 @@ class CausalManChoice(Enum):
 
 
 class CausalMan:
+    _APPROXIMATE_SAMPLES_PER_BATCH = 14_000
+
     def __init__(
         self,
         name: str = "causalman_small",
@@ -84,7 +88,34 @@ class CausalMan:
         self.intervention_dict = {}  ## NO INTERVENTION FOR NOW
         return
 
-    def sample(self):
+    def sample(self, n_samples: int = None):
+        """Generate data and optionally return exactly ``n_samples`` aligned rows."""
+        if n_samples is not None:
+            if isinstance(n_samples, bool) or not isinstance(n_samples, Integral):
+                raise TypeError("n_samples must be a positive integer or None.")
+            if n_samples <= 0:
+                raise ValueError("n_samples must be a positive integer.")
+            n_samples = int(n_samples)
+
+            # A multiplier of one produces roughly 14,000 rows. Use ceiling
+            # division so enough batches are generated before exact row sampling.
+            required_batch_multiplier = max(
+                1,
+                (
+                    n_samples
+                    + self._APPROXIMATE_SAMPLES_PER_BATCH
+                    - 1
+                )
+                // self._APPROXIMATE_SAMPLES_PER_BATCH,
+            )
+            effective_batch_multiplier = max(
+                1,
+                self.batch_multiplier,
+                required_batch_multiplier,
+            )
+        else:
+            effective_batch_multiplier = max(1, self.batch_multiplier)
+
         all_batches_df_list = []
         all_interventional_tables_list = []
 
@@ -108,6 +139,12 @@ class CausalMan:
                 batch_info_df = pd.read_csv(batch_info_path)
             else:
                 raise ValueError("No batch info file found")
+
+            if effective_batch_multiplier > 1:
+                batch_info_df = pd.concat(
+                    [batch_info_df] * effective_batch_multiplier,
+                    ignore_index=True,
+                )
 
             # Initialize the batch data
             ind_subbatch = 0
@@ -154,13 +191,22 @@ class CausalMan:
                     intervention_dict=self.intervention_dict,
                 )
 
-            all_batches_df_list.append(pd.concat(batchdata_df_list))
-            all_interventional_tables_list.append(pd.concat(int_table_list))
+            all_batches_df_list.append(
+                pd.concat(batchdata_df_list, ignore_index=True)
+            )
+            all_interventional_tables_list.append(
+                pd.concat(int_table_list, ignore_index=True)
+            )
 
         # Merge all dataframes.
-        fully_observable_dataset = pd.concat(all_batches_df_list)
+        fully_observable_dataset = pd.concat(
+            all_batches_df_list, ignore_index=True
+        )
         interventional_table = pd.concat(
-            all_interventional_tables_list, axis=0, sort=False
+            all_interventional_tables_list,
+            axis=0,
+            sort=False,
+            ignore_index=True,
         ).fillna(0)
         interventional_table = interventional_table.astype(int)
 
@@ -170,7 +216,14 @@ class CausalMan:
         # So it's better to cast everything into numeric format.
         fully_observable_dataset = clean_df(
             fully_observable_dataset, list(fully_observable_dataset.columns)
-        )
+        ).reset_index(drop=True)
+        interventional_table = interventional_table.reset_index(drop=True)
+
+        if len(interventional_table) != len(fully_observable_dataset):
+            raise RuntimeError(
+                "The generated dataset and interventional table have different "
+                "numbers of rows and cannot be sampled consistently."
+            )
 
         # Keep only graph nodes declared observable and carrying non-constant data.
         # Intervention targets remain observable when a hard intervention makes them
@@ -199,6 +252,29 @@ class CausalMan:
         mag = admg2mag(admg)
         validate_mag(mag)
 
+        if n_samples is not None:
+            if len(fully_observable_dataset) < n_samples:
+                raise RuntimeError(
+                    f"The simulator generated {len(fully_observable_dataset):,} rows "
+                    f"with batch_multiplier={effective_batch_multiplier}, but "
+                    f"n_samples={n_samples:,} were requested."
+                )
+
+            sampled_indices = fully_observable_dataset.sample(
+                n=n_samples,
+                random_state=self.random_state_seed,
+            ).index
+
+            obs_dataset = obs_dataset.loc[sampled_indices].reset_index(drop=True)
+            fully_observable_dataset = fully_observable_dataset.loc[
+                sampled_indices
+            ].reset_index(drop=True)
+            interventional_table = interventional_table.loc[
+                sampled_indices
+            ].reset_index(drop=True)
+        else:
+            obs_dataset = obs_dataset.reset_index(drop=True)
+
         return (
             obs_dataset,
             mag,
@@ -216,7 +292,7 @@ if __name__ == "__main__":
     parallelize = False
     max_workers = 5
     choice = "causalman_small"
-    data_multiplier = 1
+    n_samples = 10_000
 
     experiments_path = os.path.join(os.getcwd(), "output")
 
@@ -230,7 +306,6 @@ if __name__ == "__main__":
     simulator = CausalMan(
         name=choice,
         seed=random_state_seed,
-        batch_multiplier=data_multiplier,
         parallelize=parallelize,
         max_workers=max_workers,
         debug_mode=debug_mode,
@@ -246,6 +321,6 @@ if __name__ == "__main__":
         fully_observable_dataset,
         dag,
         interventional_table,
-    ) = simulator.sample()
+    ) = simulator.sample(n_samples=n_samples)
 
     ### END HERE ###
