@@ -18,6 +18,11 @@ import os
 from datetime import datetime
 import pandas as pd
 
+from .graph_projections import (
+    admg2mag,
+    get_latent_projection_single as latent_projection,
+    validate_mag,
+)
 from .utils.data import clean_df
 from .utils.sampling import run_sampling_parallel, run_sampling_sequential
 from enum import Enum
@@ -82,7 +87,6 @@ class CausalMan:
     def sample(self):
         all_batches_df_list = []
         all_interventional_tables_list = []
-        all_path_df_list = []
 
         # Parse the configuration
         fileName_prefix = self.name.value
@@ -110,10 +114,10 @@ class CausalMan:
 
             if self.parallelize:
                 (
-                    production_line,
-                    dag_level_2,
+                    _production_line,
+                    dag,
                     batchdata_df_list,
-                    path_df_list,
+                    _path_df_list,
                     int_table_list,
                 ) = run_sampling_parallel(
                     simulation,
@@ -131,10 +135,10 @@ class CausalMan:
                 )
             else:
                 (
-                    production_line,
-                    dag_level_2,
+                    _production_line,
+                    dag,
                     batchdata_df_list,
-                    path_df_list,
+                    _path_df_list,
                     int_table_list,
                 ) = run_sampling_sequential(
                     simulation,
@@ -152,25 +156,57 @@ class CausalMan:
 
             all_batches_df_list.append(pd.concat(batchdata_df_list))
             all_interventional_tables_list.append(pd.concat(int_table_list))
-            all_path_df_list.append(pd.concat(path_df_list))
 
-        # SAVE DATA
-        # merge all the dataframes
-        all_batches_df = pd.concat(all_batches_df_list)
-        all_paths_df = pd.concat(all_path_df_list)
-
-        all_interventional_tables = pd.concat(
+        # Merge all dataframes.
+        fully_observable_dataset = pd.concat(all_batches_df_list)
+        interventional_table = pd.concat(
             all_interventional_tables_list, axis=0, sort=False
         ).fillna(0)
-        all_interventional_tables = all_interventional_tables.astype(int)
+        interventional_table = interventional_table.astype(int)
 
         print("Finished sampling")
 
         # Sometimes sympy outputs a table where the values are still sympy objects.
         # So it's better to cast everything into numeric format.
-        all_batches_df = clean_df(all_batches_df, list(all_batches_df.columns))
+        fully_observable_dataset = clean_df(
+            fully_observable_dataset, list(fully_observable_dataset.columns)
+        )
 
-        return all_batches_df, all_interventional_tables, all_paths_df, dag_level_2
+        # Keep only graph nodes declared observable and carrying non-constant data.
+        # Intervention targets remain observable when a hard intervention makes them
+        # constant, so observed columns stay available in interventional datasets.
+        dataset_columns = set(fully_observable_dataset.columns)
+        intervention_targets = set(self.intervention_dict)
+        observable_nodes = []
+        for node, attrs in dag.nodes(data=True):
+            is_observable = attrs.get("Observable") in (True, "Observable")
+            if is_observable and node in dataset_columns:
+                is_constant = (
+                    fully_observable_dataset[node].nunique(dropna=False) <= 1
+                )
+                if is_constant and node not in intervention_targets:
+                    is_observable = False
+            else:
+                is_observable = False
+
+            dag.nodes[node]["Observable"] = is_observable
+            if is_observable:
+                observable_nodes.append(node)
+
+        obs_dataset = fully_observable_dataset.loc[:, observable_nodes].copy()
+
+        admg = latent_projection(dag.copy())
+        mag = admg2mag(admg)
+        validate_mag(mag)
+
+        return (
+            obs_dataset,
+            mag,
+            admg,
+            fully_observable_dataset,
+            dag,
+            interventional_table,
+        )
 
 
 # Example usage
@@ -203,6 +239,13 @@ if __name__ == "__main__":
 
     simulator.intervention_dict = {"PF_M1_T1_sgrad": 18500}
 
-    partially_observable_df_2, _, _, _ = simulator.sample()
+    (
+        obs_dataset,
+        mag,
+        admg,
+        fully_observable_dataset,
+        dag,
+        interventional_table,
+    ) = simulator.sample()
 
     ### END HERE ###
